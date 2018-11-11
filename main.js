@@ -1,29 +1,27 @@
 var dimension = 10;
+var gameOn = false;
+var direction = null;
 
 createTable(dimension);
 var currentPos = initialize(dimension);
-console.log(currentPos);
 
 document.onkeydown = function(e) {
-  console.log(e.key);
-  if (e.key === "ArrowUp") {
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = "";
-    currentPos = {x: currentPos.x -1, y:currentPos.y};
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = " X ";
+  if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "ArrowLeft") {
+    direction = e.key;
+    if (gameOn === false) {
+      gameOn = true;
+      timer = setInterval(timeFunction, 1000)
+    }
   }
-  if (e.key === "ArrowDown") {
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = "";
-    currentPos = {x: currentPos.x +1, y:currentPos.y};
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = " X ";
-  }
-  if (e.key === "ArrowLeft") {
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = "";
-    currentPos = {x: currentPos.x, y:currentPos.y -1};
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = " X ";
-  }
-  if (e.key === "ArrowRight") {
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = "";
-    currentPos = {x: currentPos.x, y:currentPos.y +1};
+}
+
+function checkIfLose() {
+  if (currentPos.x < 0 || currentPos.x >= dimension || currentPos.y < 0 || currentPos.y >= dimension){
+    console.log("you lose");
+    clearInterval(timer);
+    gameOn = false;
+    currentPos = initialize(dimension)
+  } else {
     document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = " X ";
   }
 }
@@ -31,7 +29,6 @@ document.onkeydown = function(e) {
 function createTable(dimension) {
   var tbl = document.createElement("table");
   document.getElementById("tableContainer").append(tbl);
-
 
   for(var i = 0; i < dimension; i++) {
     var row = document.createElement("tr");
@@ -51,4 +48,24 @@ function initialize(dimension) {
   start.innerHTML = " X "
   var startPos = {x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)};
   return startPos;
+}
+
+function timeFunction() {
+  document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = "";
+  
+  switch(direction) {
+    case "ArrowUp":
+      currentPos.x --;
+      break;
+    case "ArrowDown":
+      currentPos.x ++;
+      break;
+    case "ArrowRight":
+      currentPos.y ++;
+      break;
+    case "ArrowLeft":
+      currentPos.y --;
+      break;
+  }
+  checkIfLose()
 }
