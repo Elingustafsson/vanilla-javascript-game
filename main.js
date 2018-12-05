@@ -1,28 +1,59 @@
 var dimension = 10;
 var gameOn = false;
 var direction = null;
+var positions;
+var currentFood;
+var didIEat = false;
 
 createTable(dimension);
-var currentPos = initialize(dimension);
+initialize(dimension);
 
 document.onkeydown = function(e) {
-  if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "ArrowLeft") {
+  if (!((e.key === "ArrowUp" && direction === "ArrowDown")
+    || (e.key === "ArrowDown" && direction === "ArrowUp")
+    || (e.key === "ArrowRight" && direction === "ArrowLeft")
+    || (e.key === "ArrowLeft" && direction === "ArrowRight"))) {
+
     direction = e.key;
+
     if (gameOn === false) {
       gameOn = true;
-      timer = setInterval(timeFunction, 1000)
+      timer = setInterval(timeFunction, 500)
     }
   }
 }
 
+function grow() {
+
+
+  console.log("grow");
+}
+
+function placeFood() {
+  var randomX =  Math.floor((Math.random() * dimension))
+  var randomY =  Math.floor((Math.random() * dimension))
+  var food = document.getElementById("cell" + randomX + randomY);
+  food.innerHTML = " O "
+  currentFood = {x: randomX, y: randomY}
+}
+
+function checkIfEat() {
+  if (positions[0].x === currentFood.x && positions[0].y === currentFood.y) {
+    didIEat = true;
+    placeFood()
+  }
+}
+
 function checkIfLose() {
-  if (currentPos.x < 0 || currentPos.x >= dimension || currentPos.y < 0 || currentPos.y >= dimension){
+  if (positions[0].x < 0 || positions[0].x >= dimension || positions[0].y < 0 || positions[0].y >= dimension){
     console.log("you lose");
     clearInterval(timer);
     gameOn = false;
-    currentPos = initialize(dimension)
+    var food = document.getElementById("cell" + currentFood.x + currentFood.y);
+    food.innerHTML = ""
+    initialize(dimension)
   } else {
-    document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = " X ";
+    document.getElementById("cell" + positions[0].x + positions[0].y).innerHTML = " X ";
   }
 }
 
@@ -46,26 +77,36 @@ function createTable(dimension) {
 function initialize(dimension) {
   var start = document.getElementById("cell" + Math.floor((dimension-1)/2) + Math.floor((dimension-1)/2));
   start.innerHTML = " X "
-  var startPos = {x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)};
-  return startPos;
+  positions = [{x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)}];
+
+  placeFood()
 }
 
+
 function timeFunction() {
-  document.getElementById("cell" + currentPos.x + currentPos.y).innerHTML = "";
-  
+  if (didIEat === true) {
+    didIEat = false
+    grow()
+  } else {
+      document.getElementById("cell" + positions[0].x + positions[0].y).innerHTML = "";
+    }
+
   switch(direction) {
     case "ArrowUp":
-      currentPos.x --;
+      positions[0].x--;
       break;
     case "ArrowDown":
-      currentPos.x ++;
+      positions[0].x++;
       break;
     case "ArrowRight":
-      currentPos.y ++;
+      positions[0].y++;
       break;
     case "ArrowLeft":
-      currentPos.y --;
+      positions[0].y--;
       break;
   }
+  console.log(positions[0]);
+
+  checkIfEat()
   checkIfLose()
 }
