@@ -9,6 +9,7 @@ createTable(dimension);
 initialize(dimension);
 
 document.onkeydown = function(e) {
+  console.log("elim",positions);
   if (!((e.key === "ArrowUp" && direction === "ArrowDown")
     || (e.key === "ArrowDown" && direction === "ArrowUp")
     || (e.key === "ArrowRight" && direction === "ArrowLeft")
@@ -54,6 +55,7 @@ function checkIfLose() {
     initialize(dimension)
   } else {
     document.getElementById("cell" + positions[0].x + positions[0].y).innerHTML = " X ";
+    
   }
 }
 
@@ -75,37 +77,49 @@ function createTable(dimension) {
 }
 
 function initialize(dimension) {
-  var start = document.getElementById("cell" + Math.floor((dimension-1)/2) + Math.floor((dimension-1)/2));
-  start.innerHTML = " X "
-  positions = [{x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)}];
-
+  // var start = document.getElementById("cell" + Math.floor((dimension-1)/2) + Math.floor((dimension-1)/2));
+  // start.innerHTML = " X "
+  // positions = [{x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)}];
+  positions = [{x:1, y:1},{x:1, y:2},{x:1, y:3}];
+  for (var i = 1; i <= 3; i++) {
+    var orm = document.getElementById("cell1"+i)
+    orm.innerHTML = "X"
+  }
+  console.log("första",positions);
   placeFood()
 }
 
 
 function timeFunction() {
+  console.log("inne i ",positions);
   if (didIEat === true) {
     didIEat = false
     grow()
   } else {
       document.getElementById("cell" + positions[0].x + positions[0].y).innerHTML = "";
     }
-
+console.log("innan",positions);
+var testX = positions[0].x;
+var testY = positions[0].y;
   switch(direction) {
     case "ArrowUp":
-      positions[0].x--;
+      sista = positions.pop()
+      positions.unshift({x:testX-1, y:testY})
       break;
     case "ArrowDown":
-      positions[0].x++;
+      sista = positions.pop()
+      positions.unshift({x:positions[0].x+1, y:positions[0].y})
       break;
     case "ArrowRight":
-      positions[0].y++;
+      sista = positions.pop()
+      positions.unshift({x:positions[0].x, y:positions[0].y+1})
       break;
     case "ArrowLeft":
-      positions[0].y--;
+      sista = positions.pop()
+      positions.unshift({x:positions[0].x, y:positions[0].y-1})
       break;
   }
-  console.log(positions[0]);
+  console.log("efter",positions);
 
   checkIfEat()
   checkIfLose()
