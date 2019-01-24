@@ -1,15 +1,13 @@
 var dimension = 10;
 var gameOn = false;
 var direction = null;
-var positions;
+var positions = [];
 var currentFood;
-var didIEat = false;
 
 createTable(dimension);
 initialize(dimension);
 
 document.onkeydown = function(e) {
-  console.log("elim",positions);
   if (!((e.key === "ArrowUp" && direction === "ArrowDown")
     || (e.key === "ArrowDown" && direction === "ArrowUp")
     || (e.key === "ArrowRight" && direction === "ArrowLeft")
@@ -24,38 +22,45 @@ document.onkeydown = function(e) {
   }
 }
 
-function grow() {
-
-
-  console.log("grow");
-}
-
 function placeFood() {
-  var randomX =  Math.floor((Math.random() * dimension))
-  var randomY =  Math.floor((Math.random() * dimension))
-  var food = document.getElementById("cell" + randomX + randomY);
+  do {
+    var randomX =  Math.floor((Math.random() * dimension))
+    var randomY =  Math.floor((Math.random() * dimension))
+    currentFood = {x: randomX, y: randomY}
+    var liggerIOrmen = false;
+
+    for (var i = 0; i < positions.length; i++) {
+      if (positions[i].x === currentFood.x && positions[i].y === currentFood.y) {
+        liggerIOrmen = true;
+      }
+    }
+  }
+  while(liggerIOrmen === true)
+  var food = document.getElementById("cell" + currentFood.x+ currentFood.y);
   food.innerHTML = " O "
-  currentFood = {x: randomX, y: randomY}
 }
 
-function checkIfEat() {
-  if (positions[0].x === currentFood.x && positions[0].y === currentFood.y) {
-    didIEat = true;
-    placeFood()
-  }
+function resetGame() {
+  clearInterval(timer);
+  gameOn = false;
+  var food = document.getElementById("cell" + currentFood.x + currentFood.y);
+  food.innerHTML = ""
+  initialize(dimension)
 }
 
 function checkIfLose() {
+  for (var i = 1; i < positions.length; i++) {
+    if (positions[0].x  === positions[i].x && positions[0].y  === positions[i].y) {
+      console.log("you lose bc you enter yourself");
+      resetGame()
+    }
+  }
+
   if (positions[0].x < 0 || positions[0].x >= dimension || positions[0].y < 0 || positions[0].y >= dimension){
-    console.log("you lose");
-    clearInterval(timer);
-    gameOn = false;
-    var food = document.getElementById("cell" + currentFood.x + currentFood.y);
-    food.innerHTML = ""
-    initialize(dimension)
+    console.log("you lose bc you enter a wall");
+    resetGame()
   } else {
     document.getElementById("cell" + positions[0].x + positions[0].y).innerHTML = " X ";
-    
   }
 }
 
@@ -77,50 +82,38 @@ function createTable(dimension) {
 }
 
 function initialize(dimension) {
-  // var start = document.getElementById("cell" + Math.floor((dimension-1)/2) + Math.floor((dimension-1)/2));
-  // start.innerHTML = " X "
-  // positions = [{x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)}];
-  positions = [{x:1, y:1},{x:1, y:2},{x:1, y:3}];
-  for (var i = 1; i <= 3; i++) {
-    var orm = document.getElementById("cell1"+i)
-    orm.innerHTML = "X"
+  var start = document.getElementById("cell" + Math.floor((dimension-1)/2) + Math.floor((dimension-1)/2));
+  start.innerHTML = " X "
+  console.log(JSON.stringify(positions));
+  for (var i = 1; i < positions.length; i++) {
+    document.getElementById("cell" + positions[i].x + positions[i].y).innerHTML = " ";
   }
-  console.log("första",positions);
+  positions = [{x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)}];
   placeFood()
 }
 
 
 function timeFunction() {
-  console.log("inne i ",positions);
-  if (didIEat === true) {
-    didIEat = false
-    grow()
+  var head = Object.assign({}, positions[0]);
+  if (positions[0].x === currentFood.x && positions[0].y === currentFood.y) {
+    placeFood()
   } else {
-      document.getElementById("cell" + positions[0].x + positions[0].y).innerHTML = "";
-    }
-console.log("innan",positions);
-var testX = positions[0].x;
-var testY = positions[0].y;
+    svans = positions.pop()
+    document.getElementById("cell" + svans.x + svans.y).innerHTML = " ";
+  }
   switch(direction) {
     case "ArrowUp":
-      sista = positions.pop()
-      positions.unshift({x:testX-1, y:testY})
+      positions.unshift({x:head.x-1, y:head.y})
       break;
     case "ArrowDown":
-      sista = positions.pop()
-      positions.unshift({x:positions[0].x+1, y:positions[0].y})
+      positions.unshift({x:head.x+1, y:head.y})
       break;
     case "ArrowRight":
-      sista = positions.pop()
-      positions.unshift({x:positions[0].x, y:positions[0].y+1})
+      positions.unshift({x:head.x, y:head.y+1})
       break;
     case "ArrowLeft":
-      sista = positions.pop()
-      positions.unshift({x:positions[0].x, y:positions[0].y-1})
+      positions.unshift({x:head.x, y:head.y-1})
       break;
   }
-  console.log("efter",positions);
-
-  checkIfEat()
   checkIfLose()
 }
