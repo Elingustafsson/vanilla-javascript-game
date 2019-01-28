@@ -17,7 +17,7 @@ document.onkeydown = function(e) {
 
     if (gameOn === false) {
       gameOn = true;
-      timer = setInterval(timeFunction, 500)
+      timer = setInterval(timeFunction, 150)
     }
   }
 }
@@ -37,14 +37,14 @@ function placeFood() {
   }
   while(liggerIOrmen === true)
   var food = document.getElementById("cell" + currentFood.x+ currentFood.y);
-  food.innerHTML = " O "
+  food.style.backgroundColor = 'blue';
 }
 
 function resetGame() {
   clearInterval(timer);
   gameOn = false;
   var food = document.getElementById("cell" + currentFood.x + currentFood.y);
-  food.innerHTML = ""
+  food.style.backgroundColor = 'white';
   initialize(dimension)
 }
 
@@ -60,7 +60,7 @@ function checkIfLose() {
     console.log("you lose bc you enter a wall");
     resetGame()
   } else {
-    document.getElementById("cell" + positions[0].x + positions[0].y).innerHTML = " X ";
+    document.getElementById("cell" + positions[0].x + positions[0].y).style.backgroundColor = 'purple';
   }
 }
 
@@ -83,10 +83,9 @@ function createTable(dimension) {
 
 function initialize(dimension) {
   var start = document.getElementById("cell" + Math.floor((dimension-1)/2) + Math.floor((dimension-1)/2));
-  start.innerHTML = " X "
-  console.log(JSON.stringify(positions));
+  start.style.backgroundColor = 'purple';
   for (var i = 1; i < positions.length; i++) {
-    document.getElementById("cell" + positions[i].x + positions[i].y).innerHTML = " ";
+    document.getElementById("cell" + positions[i].x + positions[i].y).style.backgroundColor = 'white';
   }
   positions = [{x: Math.floor((dimension-1)/2), y: Math.floor((dimension-1)/2)}];
   placeFood()
@@ -99,7 +98,7 @@ function timeFunction() {
     placeFood()
   } else {
     svans = positions.pop()
-    document.getElementById("cell" + svans.x + svans.y).innerHTML = " ";
+    document.getElementById("cell" + svans.x + svans.y).style.backgroundColor = 'white';
   }
   switch(direction) {
     case "ArrowUp":
