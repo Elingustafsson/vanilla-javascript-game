@@ -3,9 +3,65 @@ var gameOn = false;
 var direction = null;
 var positions = [];
 var currentFood;
+var tid = 200;
+var score = 0;
+var highScore = [];
+
+// Spara variabel: name
+// Gör input för name
+// spara name med score i highScore[som obj med varsin key]
+// Displaya score och name efter highscore
 
 createTable(dimension);
 initialize(dimension);
+
+function changeTime() {
+  let time = document.getElementById('hej').value
+    tid = Number(time);
+
+  // switch (time) {
+  //   case 'default':
+  //     tid = 200;
+  //     console.log("supereasy");
+  //     break;
+  //   case 'supereasy':
+  //     tid = 400;
+  //     console.log("supereasy");
+  //     break;
+  //   case 'easy':
+  //     tid = 250;
+  //     console.log("easy");
+  //     break;
+  //   case 'medium':
+  //     tid = 150;
+  //     console.log("medium");
+  //     break;
+  //   case 'hard':
+  //     tid = 85;
+  //     console.log("hard");
+  //     break;
+  //   case 'impossible':
+  //     tid = 40;
+  //     console.log("impossible");
+  //     break;
+  // }
+}
+
+// function changeMap() {
+//   let mapSize = document.getElementById('map').value
+//   switch (mapSize) {
+//     case 'small':
+//       dimension = 5;
+//       console.log("lal");
+//       break;
+//     case 'medium':
+//       dimension = 10;
+//       break;
+//     case 'large':
+//       dimension = 15;
+//       break;
+//   }
+// }
 
 document.onkeydown = function(e) {
   if (!((e.key === "ArrowUp" && direction === "ArrowDown")
@@ -17,7 +73,7 @@ document.onkeydown = function(e) {
 
     if (gameOn === false) {
       gameOn = true;
-      timer = setInterval(timeFunction, 150)
+      timer = setInterval(timeFunction, tid)
     }
   }
 }
@@ -38,9 +94,18 @@ function placeFood() {
   while(liggerIOrmen === true)
   var food = document.getElementById("cell" + currentFood.x+ currentFood.y);
   food.style.backgroundColor = 'blue';
+  // classList.add("mat");
 }
 
 function resetGame() {
+  //Är detta ett bra ställe att placera detta på?
+  highScore.push(score);
+  highScore.sort(function(a, b) {
+  return b - a;
+  });
+  console.log("ey", highScore);
+  document.getElementById("elin").innerHTML = "HIGH SCORE: " + highScore[0];
+
   clearInterval(timer);
   gameOn = false;
   var food = document.getElementById("cell" + currentFood.x + currentFood.y);
@@ -55,7 +120,6 @@ function checkIfLose() {
       resetGame()
     }
   }
-
   if (positions[0].x < 0 || positions[0].x >= dimension || positions[0].y < 0 || positions[0].y >= dimension){
     console.log("you lose bc you enter a wall");
     resetGame()
@@ -96,6 +160,8 @@ function timeFunction() {
   var head = Object.assign({}, positions[0]);
   if (positions[0].x === currentFood.x && positions[0].y === currentFood.y) {
     placeFood()
+    score = positions.length;
+    document.getElementById("display").innerHTML = "Din poäng: " + score;
   } else {
     svans = positions.pop()
     document.getElementById("cell" + svans.x + svans.y).style.backgroundColor = 'white';
