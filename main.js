@@ -6,45 +6,26 @@ var currentFood;
 var tid = 200;
 var score = 0;
 var highScore = [];
+var name = "";
+var nameHighScore = [];
 
-// Spara variabel: name
-// Gör input för name
+
 // spara name med score i highScore[som obj med varsin key]
 // Displaya score och name efter highscore
 
 createTable(dimension);
 initialize(dimension);
 
+function saveName() {
+  var inputName = document.getElementById('inputName').value
+    name = inputName;
+    console.log("hej", name);
+    document.getElementById('yourName').innerHTML = "Hej " + name;
+}
+
 function changeTime() {
   let time = document.getElementById('hej').value
     tid = Number(time);
-
-  // switch (time) {
-  //   case 'default':
-  //     tid = 200;
-  //     console.log("supereasy");
-  //     break;
-  //   case 'supereasy':
-  //     tid = 400;
-  //     console.log("supereasy");
-  //     break;
-  //   case 'easy':
-  //     tid = 250;
-  //     console.log("easy");
-  //     break;
-  //   case 'medium':
-  //     tid = 150;
-  //     console.log("medium");
-  //     break;
-  //   case 'hard':
-  //     tid = 85;
-  //     console.log("hard");
-  //     break;
-  //   case 'impossible':
-  //     tid = 40;
-  //     console.log("impossible");
-  //     break;
-  // }
 }
 
 // function changeMap() {
@@ -64,16 +45,22 @@ function changeTime() {
 // }
 
 document.onkeydown = function(e) {
-  if (!((e.key === "ArrowUp" && direction === "ArrowDown")
-    || (e.key === "ArrowDown" && direction === "ArrowUp")
-    || (e.key === "ArrowRight" && direction === "ArrowLeft")
-    || (e.key === "ArrowLeft" && direction === "ArrowRight"))) {
+  if ((e.key === "ArrowUp")
+  || (e.key === "ArrowDown")
+  || (e.key === "ArrowRight")
+  || (e.key === "ArrowLeft")) {
 
-    direction = e.key;
+    if (!((e.key === "ArrowUp" && direction === "ArrowDown")
+      || (e.key === "ArrowDown" && direction === "ArrowUp")
+      || (e.key === "ArrowRight" && direction === "ArrowLeft")
+      || (e.key === "ArrowLeft" && direction === "ArrowRight"))) {
 
-    if (gameOn === false) {
-      gameOn = true;
-      timer = setInterval(timeFunction, tid)
+      direction = e.key;
+
+      if (gameOn === false) {
+        gameOn = true;
+        timer = setInterval(timeFunction, tid)
+      }
     }
   }
 }
@@ -98,7 +85,6 @@ function placeFood() {
 }
 
 function resetGame() {
-  //Är detta ett bra ställe att placera detta på?
   highScore.push(score);
   highScore.sort(function(a, b) {
   return b - a;
